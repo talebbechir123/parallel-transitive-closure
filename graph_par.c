@@ -7,7 +7,8 @@
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
-
+#include <omp.h>
+#include <mpi.h>
 
 // matrix size and some others
 #include "graph.h"
