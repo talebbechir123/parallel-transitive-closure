@@ -46,7 +46,7 @@ graph_par : graph_par.o util.h util.o graph.h
 	$(CC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
 
 graph_par.o : graph_par.c util.h graph.h
-	$(MPICC) $(CFLAGS) $(OMP) -c $<
+	$(CC) $(CFLAGS) $(OMP) -c $<
 
 
 convert_adj_to_dot : convert_adj_to_dot.o util.o util.h
