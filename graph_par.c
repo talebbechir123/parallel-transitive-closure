@@ -67,7 +67,12 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
         for (i = 0; i < n; i++)
             for (j = 0; j < n; j++)
                 c[i][j] = a[i][j];
-       
+       //* print_matrix(): printed 1000 lines.
+      //Init : 0.056649s, Compute : 1.430937s
+
+      // version par
+     // * print_matrix(): printed 1000 lines.
+    //Init : 0.040848s, Compute : 0.318178s
         
         //  updates the value of c[i][j] to true if there is a path
         //  from i to j that goes through k.
@@ -156,7 +161,7 @@ int main (int argc, char **argv) {
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
-      print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
+      //print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
 
 #ifdef CCOMP
       size_t ncomps;
