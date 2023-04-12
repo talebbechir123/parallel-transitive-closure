@@ -59,18 +59,31 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 
 
      int i, j, k;
-    #pragma omp parallel for private(k, i, j) shared(a, n)
-    for (k = 0; k < n; k++) {
-        #pragma omp parallel for private(i, j) shared(a, k, n)
-        for (i = 0; i < n; i++) {
-            if (a[i][k]) {
-                #pragma omp parallel for private(j) shared(a, i, k, n)
+ #pragma omp parallel shared(a, c, n) private(i, j, k)
+    {
+
+         // init matrix c from matrix a
+     #pragma omp for 
+        for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                c[i][j] = a[i][j];
+       
+        
+        //  updates the value of c[i][j] to true if there is a path
+        //  from i to j that goes through k.
+        #pragma omp for
+        for (k = 0; k < n; k++) {
+            for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
-                    a[i][j] |= a[k][j];
+                    c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
                 }
             }
         }
+
+
+         
     }
+    
 
     
 }
