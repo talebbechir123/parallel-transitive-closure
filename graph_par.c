@@ -62,7 +62,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
      for (i = 0; i < n; i++)
             for (j = 0; j < n; j++)
                 c[i][j] = a[i][j];
-                
+
  #pragma omp parallel shared(a, c, n) private(i, j, k)
     {
 
@@ -246,7 +246,7 @@ int main (int argc, char **argv) {
 #ifdef DEBUG
       print_matrix ("a_orig", n , a, 0, n, 0, n, 0, false);
 #endif
-      //Compute
+      //Compute 
        printf("original matrix\n");
         print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
