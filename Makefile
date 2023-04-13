@@ -112,7 +112,7 @@ run-par-10000: graph_par $(DATADIR)/$(DATASET_10000)
 		echo ; \
 	done
 
-run-pc-1000: graph_omp $(DATADIR)/$(DATASET_1000) 
+run-pc-1000: graph_par $(DATADIR)/$(DATASET_1000) 
 	@mkdir -p $(RESDIR_PAR)
 
 	for np in 4; do \
