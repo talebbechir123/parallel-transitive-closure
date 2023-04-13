@@ -179,23 +179,6 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                         }
                     }
                 }
-
-                # pragma omp parallel for private(i, j, Wij)
-                for (i = ii; i < (ii + b); i++) {
-                    if (i == kk) continue;
-                    for (j = jj; j < (jj + b); j++) {
-                        if (j == kk) continue;
-                        for (k = kk; (k < kk + b) && (k < n); k++) {
-                            Wij[i - ii][j - jj] = c[i][j - jj];
-                        }
-                    }
-                    for (j = jj; j < (jj + b) ; j++) {
-                        if (j == kk) continue;
-                        for (k = kk; (k < kk + b) &&( k < n); k++) {
-                            c[i - ii][j - jj] = c[i - ii][j - jj] ||(Wik[j - jj][k - kk] && Wkj[i - ii][k - kk]);
-                        }
-                    }
-                }
             }
         }
     }
