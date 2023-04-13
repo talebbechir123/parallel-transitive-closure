@@ -63,7 +63,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
             for (j = 0; j < n; j++)
                 c[i][j] = a[i][j];
 
- #pragma omp parallel shared(a, c, n) private(i, j, k) schedule(static)
+ #pragma omp parallel shared(a, c, n) private(i, j, k) 
     {
 
          // init matrix c from matrix a
@@ -78,7 +78,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
         
         //  updates the value of c[i][j] to true if there is a path
         //  from i to j that goes through k.
-        #pragma omp for
+        #pragma omp for schedule(static)
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
