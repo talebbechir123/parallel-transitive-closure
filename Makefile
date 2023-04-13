@@ -112,6 +112,15 @@ run-par-10000: graph_par $(DATADIR)/$(DATASET_10000)
 		echo ; \
 	done
 
+run-pc-1000: graph_omp $(DATADIR)/$(DATASET_1000) 
+	@mkdir -p $(RESDIR_PAR)
+
+	for np in 4; do \
+		echo ">>> -n $$np"; \
+	    ./graph_par -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)$$np-$(TCLOS_EXT); \
+		echo ; \
+	done
+
 # ----------------- tests ------------------------------
 test-seq-1000: run-seq-1000
 
@@ -133,6 +142,11 @@ test-par-10000: run-par-10000
 	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_10000)-$(MPI_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_10000)-$(TCLOS_EXT))"
 	@echo "MD5"
 	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_10000)-$(MPI_EXT)*-$(TCLOS_EXT) )"
+test-pc-1000: run-pc-1000 run-seq-1000
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_1000)-$(TCLOS_EXT))"
+	@echo "MD5"
+	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)*-$(TCLOS_EXT) )"
+
 
 
 # ----------------- tests ------------------------------
