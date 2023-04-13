@@ -108,6 +108,7 @@ void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
         for (i = 0; i < b; i++) {
             for (j = 0; j < b; j++) {
                 c[i][j] = min(c[i][j], a[i][k] + B[k][j]);
+                 
             }
         }
     }
@@ -150,14 +151,6 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
         // dependant phase
         floyd_w2(b,W1,W1,W1);
         // modify c
-        for (int i = 0; i < b; i++)
-        {
-            for (int j = 0; j < b; j++)
-            {
-                c[i][j]=W1[i][j];
-            }
-            
-        }
          
         //partially dependent phase
         #pragma omp parallel sections
