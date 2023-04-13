@@ -120,6 +120,7 @@ void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
 void blocked_floyd_warshall( int n,int c[][n] ,int W[][n]) 
 {
     int B = 4;  // number of blocks
+    int b = n / B;  // size of a block
     int k, i, j;
 
    // init W from c
