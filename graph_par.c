@@ -63,7 +63,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
             for (j = 0; j < n; j++)
                 c[i][j] = a[i][j];
 
- #pragma omp parallel shared(a, c, n) private(i, j, k)
+ #pragma omp parallel shared(a, c, n) private(i, j, k) schedule(static)
     {
 
          // init matrix c from matrix a
