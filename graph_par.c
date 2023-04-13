@@ -144,7 +144,7 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
     }
     
     // for k from 0 to B do
-     /
+     
     for (int k = 0; k < b; k++)
     {
         // dependant phase
