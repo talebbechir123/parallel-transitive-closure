@@ -117,7 +117,7 @@ void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
 
     
 // Blocked Floyd-Warshall algorithm with OpenMP
-void blocked_floyd_warshall(int c[n][n] ,int W[n][n], int n) 
+void blocked_floyd_warshall( int n,int c[][n] ,int W[][n]) 
 {
     int B = 4;  // number of blocks
     int k, i, j;
