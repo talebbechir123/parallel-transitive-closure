@@ -115,93 +115,96 @@ void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
     
 }
 
-void blocked_floyd_warshall( int n,int W[][n],int c[][n])
+    
+// Blocked Floyd-Warshall algorithm with OpenMP
+void blocked_floyd_warshall(int W[][n], int n) 
 {
+    int B = 4;  // number of blocks
+    int k, i, j;
 
-    //split W into "blocks" with blocksize "b"
-    int b =4;
-    int W1[b][b],W2[b][b],W3[b][b],W4[b][b];
-   //init c 
-   for (int i = 0; i < n; i++)
-   {
-       for (int j = 0; j < n; j++)
-       {
-           c[i][j]=W[i][j];
-       }
-       
-   }
-   
-    //split W into 4 parts
-    for (int i = 0; i < b; i++)
-    {
-        for (int j = 0; j < b; j++)
-        {
-            W1[i][j]=W[i][j];
-            W2[i][j]=W[i][j+b];
-            W3[i][j]=W[i+b][j];
-            W4[i][j]=W[i+b][j+b];
-        }
-        
-    }
-    
-    // for k from 0 to B do
-     
-    for (int k = 0; k < b; k++)
-    {
-        // dependant phase
-        floyd_w2(b,W1,W1,W1);
-        // modify c
-         
-        //partially dependent phase
-        #pragma omp parallel sections
-        {
-            #pragma omp section
-            {
-                floyd_w2(b,W2,W1,W2);
-                // modify c
-                for (int i = 0; i < b; i++)
-                {
-                    for (int j = 0; j < b; j++)
-                    {
-                        c[i][j+b]=W2[i][j];
-                    }
-                    
-                }
+    // Loop over blocks
+    #pragma omp parallel for schedule(static)
+    for (k = 0; k < B; k++) {
+        int Wkk[b][b], Wkj[b][b], Wik[b][b], Wij[b][b];
+        int W_kk[b][b], W_kj[b][b], W_ik[b][b], W_ij[b][b];
+
+        // Copy the block W_kk into a local buffer
+        for (i = 0; i < b; i++) {
+            for (j = 0; j < b; j++) {
+                Wkk[i][j] = W[k*b+i][k*b+j];
             }
-            #pragma omp section
-            {
-                floyd_w2(b,W3,W3,W1);
-                for (int i = 0; i < b; i++)
-                {
-                    for (int j = 0; j < b; j++)
-                    {
-                        c[i+b][j]=W3[i][j];
-                    }
-                    
-                }
-            }
-            #pragma omp section
-            {
-                floyd_w2(b,W4,W3,W2);
-                for (int i = 0; i < b; i++)
-                {
-                    for (int j = 0; j < b; j++)
-                    {
-                        c[i+b][j+b]=W4[i][j];
-                    }
-                    
-                }
-            }
-            
         }
 
-       
+        // Dependent phase
+        floyd(Wkk, Wkk, Wkk, b);
 
-          
+        // Partially dependent phase
+        #pragma omp for schedule(static)
+        for (j = 0; j < B; j++) {
+            if (j != k) {
+                // Copy the block W_kj into a local buffer
+                for (i = 0; i < b; i++) {
+                    for (int l = 0; l < b; l++) {
+                        Wkj[i][l] = W[k*b+i][j*b+l];
+                    }
+                }
+                floyd(Wkj, Wkk, Wkj, b);
+                // Copy the local buffer back into W_kj
+                for (i = 0; i < b; i++) {
+                    for (int l = 0; l < b; l++) {
+                        W[k*b+i][j*b+l] = Wkj[i][l];
+                    }
+                }
+            }
+        }
 
+        #pragma omp for schedule(static)
+        for (i = 0; i < B; i++) {
+            if (i != k) {
+                // Copy the block W_ik into a local buffer
+                for (int l = 0; l < b; l++) {
+                    for (j = 0; j < b; j++) {
+                        Wik[l][j] = W[i*b+l][k*b+j];
+                    }
+                }
+                floyd(Wik, Wik, Wkk, b);
+                // Copy the local buffer back into W_ik
+                for (int l = 0; l < b; l++) {
+                    for (j = 0; j < b; j++) {
+                        W[i*b+l][k*b+j] = Wik[l][j];
+                    }
+                }
+            }
+        }
+
+        // Independent phase
+        #pragma omp for schedule(static)
+        for (i = 0; i < B; i++) {
+            if (i != k) {
+                // Copy the block W_ij into a local buffer 
+
+            for (int l = 0; l < b; l++) {
+                for (j = 0; j < B; j++) {
+                    if (j != k) {
+                        Wij[l][j] = W[i*b+l][j*b+k];
+                    }
+                }
+            }
+            floyd(Wij, Wik, Wkj, b);
+            // Copy the local buffer back into W_ij
+            for (int l = 0; l < b; l++) {
+                for (j = 0; j < B; j++) {
+                    if (j != k) {
+                        W[i*b+l][j*b+k] = Wij[l][j];
+                    }
+                }
+            }
+        }
     }
-    
 }
+
+
+
 
 /**
  * main
