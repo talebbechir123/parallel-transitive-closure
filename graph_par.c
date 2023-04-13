@@ -146,7 +146,7 @@ void blocked_floyd_warshall( int n,int c[][n] ,int W[][n])
         floyd_w2(b,Wkk,Wkk,Wkk);
 
         // Partially dependent phase
-        #pragma omp for schedule(static)
+        #pragma omp section 
         for (j = 0; j < B; j++) {
             if (j != k) {
                 // Copy the block W_kj into a local buffer
@@ -166,7 +166,7 @@ void blocked_floyd_warshall( int n,int c[][n] ,int W[][n])
             }
         }
 
-        #pragma omp for schedule(static)
+        #pragma omp section 
         for (i = 0; i < B; i++) {
             if (i != k) {
                 // Copy the block W_ik into a local buffer
@@ -187,7 +187,7 @@ void blocked_floyd_warshall( int n,int c[][n] ,int W[][n])
         }
 
         // Independent phase
-        #pragma omp for schedule(static)
+        #pragma omp section 
         for (i = 0; i < B; i++) {
             if (i != k) {
                 // Copy the block W_ij into a local buffer 
