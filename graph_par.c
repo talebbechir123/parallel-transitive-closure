@@ -117,11 +117,17 @@ void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
 
     
 // Blocked Floyd-Warshall algorithm with OpenMP
-void blocked_floyd_warshall(int W[][n], int n) 
+void blocked_floyd_warshall(int c[n][n] ,int W[n][n], int n) 
 {
     int B = 4;  // number of blocks
     int k, i, j;
 
+   // init W from c
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            W[i][j] = c[i][j];
+        }
+    }
     // Loop over blocks
     #pragma omp parallel for schedule(static)
     for (k = 0; k < B; k++) {
@@ -136,7 +142,8 @@ void blocked_floyd_warshall(int W[][n], int n)
         }
 
         // Dependent phase
-        floyd(Wkk, Wkk, Wkk, b);
+        //floyd(Wkk, Wkk, Wkk, b);
+        floyd_w2(b,Wkk,Wkk,Wkk);
 
         // Partially dependent phase
         #pragma omp for schedule(static)
@@ -148,7 +155,8 @@ void blocked_floyd_warshall(int W[][n], int n)
                         Wkj[i][l] = W[k*b+i][j*b+l];
                     }
                 }
-                floyd(Wkj, Wkk, Wkj, b);
+                //floyd(Wkj, Wkk, Wkj, b);
+                floyd_w2(b,Wkj,Wkk,Wkj);
                 // Copy the local buffer back into W_kj
                 for (i = 0; i < b; i++) {
                     for (int l = 0; l < b; l++) {
@@ -167,7 +175,8 @@ void blocked_floyd_warshall(int W[][n], int n)
                         Wik[l][j] = W[i*b+l][k*b+j];
                     }
                 }
-                floyd(Wik, Wik, Wkk, b);
+                //floyd(Wik, Wik, Wkk, b);
+                floyd_w2(b,Wik,Wik,Wkk);
                 // Copy the local buffer back into W_ik
                 for (int l = 0; l < b; l++) {
                     for (j = 0; j < b; j++) {
@@ -190,7 +199,8 @@ void blocked_floyd_warshall(int W[][n], int n)
                     }
                 }
             }
-            floyd(Wij, Wik, Wkj, b);
+            //floyd(Wij, Wik, Wkj, b);
+            floyd_w2(b,Wij,Wik,Wkj);
             // Copy the local buffer back into W_ij
             for (int l = 0; l < b; l++) {
                 for (j = 0; j < B; j++) {
