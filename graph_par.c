@@ -127,7 +127,7 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                 for (k = kk; k < kk + b && k < n; k++) {
                     for (i = ii; i < ii + b && i < n; i++) {
                         for (j = jj; j < jj + b && j < n; j++) {
-                            c[i - ii][j - jj] = min(Wkk[i - ii][j - jj], c[i - ii][k - kk] + c[k][j - jj]);
+                            c[i - ii][j - jj] = Wkk[i - ii][j - jj]|| ( c[i - ii][k - kk] && c[k][j - jj])
                         }
                     }
                 }
@@ -135,7 +135,8 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                     for (k = kk; k < kk + b && k < n; k++) {
                         for (j = jj; j < jj + b && j < n; j++) {
                             Wik[i - ii][j - jj] = c[i - ii][j - jj];
-                            Wik[i - ii][j - jj] = min(Wik[i - ii][j - jj], c[i - ii][k - kk] + c[k][j - jj]);
+                            Wik[i - ii][j - jj] = Wik[i - ii][j - jj] || (c[i - ii][k - kk] && c[k][j - jj]);
+                                                  //c[i][j] || (c[i][k] && c[k][j]);
                         }
                     }
                 }
@@ -150,7 +151,7 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                     }
                     for (i = ii; i < ii + b && i < n; i++) {
                         for (k = kk; k < kk + b && k < n; k++) {
-                            c[i - ii][j - jj] = min(c[i - ii][j - jj], Wik[i - ii][k - kk] + Wkj[i - ii][k - kk]);
+                            c[i - ii][j - jj] = c[i - ii][j - jj]||( Wik[i - ii][k - kk] && Wkj[i - ii][k - kk])
                         }
                     }
                 }
@@ -165,7 +166,7 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                     }
                     for (j = jj; j < jj + b && j < n; j++) {
                         for (k = kk; k < kk + b && k < n; k++) {
-                            c[i - ii][j - jj] = min(c[i - ii][j - jj], Wik[j - jj][k - kk] + Wkj[i - ii][k - kk]);
+                            c[i - ii][j - jj] = c[i - ii][j - jj] ||(Wik[j - jj][k - kk] && Wkj[i - ii][k - kk]);
                         }
                     }
                 }
