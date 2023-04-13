@@ -56,17 +56,19 @@ void warshall(size_t n, int a[n][n], int c[n][n]) {
 }
 
 void warshall_par(size_t n, int a[n][n], int c[n][n]) {
-
+ 
 
      int i, j, k;
+     for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                c[i][j] = a[i][j];
+                
  #pragma omp parallel shared(a, c, n) private(i, j, k)
     {
 
          // init matrix c from matrix a
-     #pragma omp for 
-        for (i = 0; i < n; i++)
-            for (j = 0; j < n; j++)
-                c[i][j] = a[i][j];
+     
+        
        //* print_matrix(): printed 1000 lines.
       //Init : 0.056649s, Compute : 1.430937s
 
