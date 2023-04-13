@@ -119,21 +119,21 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
         for (ii = 0; ii < n; ii += b) {
             for (jj = 0; jj < n; jj += b) {
                 // process block W[kk][kk]
-                for (i = ii; i < ii + b && i < n; i++) {
-                    for (j = jj; j < jj + b && j < n; j++) {
+                for (i = ii; i < ii + b , i < n; i++) {
+                    for (j = jj; j < jj + b ,j < n; j++) {
                         Wkk[i - ii][j - jj] = c[i][j];
                     }
                 }
                 for (k = kk; k < kk + b && k < n; k++) {
-                    for (i = ii; i < ii + b && i < n; i++) {
-                        for (j = jj; j < jj + b && j < n; j++) {
-                            c[i - ii][j - jj] = Wkk[i - ii][j - jj]|| ( c[i - ii][k - kk] && c[k][j - jj])
+                    for (i = ii; i < ii + b , i < n; i++) {
+                        for (j = jj; j < jj + b , j < n; j++) {
+                            c[i - ii][j - jj] = Wkk[i - ii][j - jj]|| ( c[i - ii][k - kk] && c[k][j - jj]);
                         }
                     }
                 }
-                for (i = ii; i < ii + b && i < n; i++) {
-                    for (k = kk; k < kk + b && k < n; k++) {
-                        for (j = jj; j < jj + b && j < n; j++) {
+                for (i = ii; i < ii + b , i < n; i++) {
+                    for (k = kk; k < kk + b , k < n; k++) {
+                        for (j = jj; j < jj + b , j < n; j++) {
                             Wik[i - ii][j - jj] = c[i - ii][j - jj];
                             Wik[i - ii][j - jj] = Wik[i - ii][j - jj] || (c[i - ii][k - kk] && c[k][j - jj]);
                                                   //c[i][j] || (c[i][k] && c[k][j]);
@@ -142,30 +142,48 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
                 }
                 // partially dependent phase
                 #pragma omp parallel for private(j, k, Wkj)
-                for (j = jj; j < jj + b && j < n; j++) {
+                for (j = jj; j < jj + b , j < n; j++) {
                     if (j == kk) continue;
                     for (k = kk; k < kk + b && k < n; k++) {
                         for (i = ii; i < ii + b && i < n; i++) {
                             Wkj[i - ii][k - kk] = c[k][j - jj];
                         }
                     }
-                    for (i = ii; i < ii + b && i < n; i++) {
+                    for (i = ii; i < ii + b , i < n; i++) {
                         for (k = kk; k < kk + b && k < n; k++) {
-                            c[i - ii][j - jj] = c[i - ii][j - jj]||( Wik[i - ii][k - kk] && Wkj[i - ii][k - kk])
+                            c[i - ii][j - jj] = c[i - ii][j - jj]||( Wik[i - ii][k - kk] && Wkj[i - ii][k - kk]);
                         }
                     }
                 }
+                  
                 // partially dependent phase
                 #pragma omp parallel for private(i, k, Wik)
-                for (i = ii; i < ii + b && i < n; i++) {
+                for (i = ii; i < ii + b , i < n; i++) {
                     if (i == kk) continue;
                     for (k = kk; k < kk + b && k < n; k++) {
                         for (j = jj; j < jj + b && j < n; j++) {
                             Wik[j - jj][k - kk] = c[i][k - kk];
                         }
                     }
-                    for (j = jj; j < jj + b && j < n; j++) {
+                    for (j = jj; j < jj + b , j < n; j++) {
                         for (k = kk; k < kk + b && k < n; k++) {
+                            c[i - ii][j - jj] = c[i - ii][j - jj] ||(Wik[j - jj][k - kk] && Wkj[i - ii][k - kk]);
+                        }
+                    }
+                }
+
+                # pragma omp parallel for private(i, j, Wij)
+                for (i = ii; i < ii + b , i < n; i++) {
+                    if (i == kk) continue;
+                    for (j = jj; j < jj + b , j < n; j++) {
+                        if (j == kk) continue;
+                        for (k = kk; k < kk + b , k < n; k++) {
+                            Wij[i - ii][j - jj] = c[i][j - jj];
+                        }
+                    }
+                    for (j = jj; j < jj + b , j < n; j++) {
+                        if (j == kk) continue;
+                        for (k = kk; k < kk + b , k < n; k++) {
                             c[i - ii][j - jj] = c[i - ii][j - jj] ||(Wik[j - jj][k - kk] && Wkj[i - ii][k - kk]);
                         }
                     }
