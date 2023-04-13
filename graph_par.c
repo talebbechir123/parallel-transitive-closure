@@ -149,23 +149,61 @@ void blocked_floyd_warshall( int n,int W[][n],int c[][n])
     {
         // dependant phase
         floyd_w2(b,W1,W1,W1);
+        // modify c
+        for (int i = 0; i < b; i++)
+        {
+            for (int j = 0; j < b; j++)
+            {
+                c[i][j]=W1[i][j];
+            }
+            
+        }
+         
         //partially dependent phase
         #pragma omp parallel sections
         {
             #pragma omp section
             {
                 floyd_w2(b,W2,W1,W2);
+                // modify c
+                for (int i = 0; i < b; i++)
+                {
+                    for (int j = 0; j < b; j++)
+                    {
+                        c[i][j+b]=W2[i][j];
+                    }
+                    
+                }
             }
             #pragma omp section
             {
                 floyd_w2(b,W3,W3,W1);
+                for (int i = 0; i < b; i++)
+                {
+                    for (int j = 0; j < b; j++)
+                    {
+                        c[i+b][j]=W3[i][j];
+                    }
+                    
+                }
             }
             #pragma omp section
             {
                 floyd_w2(b,W4,W3,W2);
+                for (int i = 0; i < b; i++)
+                {
+                    for (int j = 0; j < b; j++)
+                    {
+                        c[i+b][j+b]=W4[i][j];
+                    }
+                    
+                }
             }
             
         }
+
+       
+
           
 
     }
