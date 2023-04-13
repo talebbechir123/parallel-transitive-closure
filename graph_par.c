@@ -64,7 +64,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
                 c[i][j] = a[i][j];
 
     // set the number of threads
-    omp_set_num_threads(6);
+    //omp_set_num_threads(6);
 
  #pragma omp parallel shared(a, c, n) private(i, j, k) 
     {
