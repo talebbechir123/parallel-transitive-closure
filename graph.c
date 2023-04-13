@@ -115,7 +115,7 @@ int main (int argc, char **argv) {
       print_matrix ("a_orig", n , a, 0, n, 0, n, 0, false);
 #endif
       //Compute
-      printf("original matrix");
+      printf("original matrix\n");
         print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
