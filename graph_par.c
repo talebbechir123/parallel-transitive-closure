@@ -96,94 +96,80 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 }
 
 
-void warshall_par2(size_t n, int a[n][n], int c[n][n]) {
-    
-   // split c into 4 parts and init from a
-  
-    //
-
-    
-}
 
 int min(int a, int b) {
     return a < b ? a : b;
 }
 
-void blocked_floyd_warshall( int n,int W[][n],int c[][n])
+void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
 {
-    int i, j, k, ii, jj, kk;
-    int b = 4;  // block size
-    int Wkk[b][b], Wkj[b][b], Wik[b][b], Wij[b][b];
-    // init matrix c from matrix W
-    for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++)
-            c[i][j] = W[i][j];
-
-
-    // split W into blocks
-    for (kk = 0; kk < n; kk += b) {
-        for (ii = 0; ii < n; ii += b) {
-            for (jj = 0; jj < n; jj += b) {
-                // process block W[kk][kk]
-                for (i = ii; i < (ii + b); i++) {
-                    for (j = jj; j < (jj + b); j++) {
-                        Wkk[i - ii][j - jj] = c[i][j];
-                    }
-                }
-                for (k = kk; (k < kk + b )&&( k < n); k++) {
-                    for (i = ii; i < (ii + b) ; i++) {
-                        for (j = jj; j < (jj + b); j++) {
-                            c[i - ii][j - jj] = Wkk[i - ii][j - jj]|| ( c[i - ii][k - kk] && c[k][j - jj]);
-                        }
-                    }
-                }
-                for (i = ii; i < (ii + b ); i++) {
-                    for (k = kk; (k < kk + b )&&( k < n); k++) {
-                        for (j = jj; j < (jj + b); j++) {
-                            Wik[i - ii][j - jj] = c[i - ii][j - jj];
-                            Wik[i - ii][j - jj] = Wik[i - ii][j - jj] || (c[i - ii][k - kk] && c[k][j - jj]);
-                                                  //c[i][j] || (c[i][k] && c[k][j]);
-                        }
-                    }
-                }
-                // for( ; i+o<N*C && i < C*n; i++ )
-                //int maxII = min( N*C-o, C*n);
-                //int maxII =  min( ii + b, n);
-                //ii<maxII 
-                // partially dependent phase
-                #pragma omp parallel for private(j, k, Wkj)
-                for (j = jj; j < (jj + b); j++) {
-                    if (j == kk) continue;
-                    for (k = kk; (k < kk + b) && (k < n); k++) {
-                        for (i = ii; i < (ii + b); i++) {
-                            Wkj[i - ii][k - kk] = c[k][j - jj];
-                        }
-                    }
-                    for (i = ii; i < (ii + b); i++) {
-                        for (k = kk; (k < kk + b) && (k < n); k++) {
-                            c[i - ii][j - jj] = c[i - ii][j - jj]||( Wik[i - ii][k - kk] && Wkj[i - ii][k - kk]);
-                        }
-                    }
-                }
-                  
-                // partially dependent phase
-                #pragma omp parallel for private(i, k, Wik)
-                for (i = ii; i <( ii + b); i++) {
-                    if (i == kk) continue;
-                    for (k = kk;( k < kk + b) && (k < n); k++) {
-                        for (j = jj; j < (jj + b); j++) {
-                            Wik[j - jj][k - kk] = c[i][k - kk];
-                        }
-                    }
-                    for (j = jj; j < (jj + b); j++) {
-                        for (k = kk; (k < kk + b) && (k < n); k++) {
-                            c[i - ii][j - jj] = c[i - ii][j - jj] ||(Wik[j - jj][k - kk] && Wkj[i - ii][k - kk]);
-                        }
-                    }
-                }
+    int i, j, k;
+    for (k = 0; k < b; k++) {
+        for (i = 0; i < b; i++) {
+            for (j = 0; j < b; j++) {
+                c[i][j] = min(c[i][j], a[i][k] + B[k][j]);
             }
         }
     }
+    
+}
+
+void blocked_floyd_warshall( int n,int W[][n],int c[][n])
+{
+
+    //split W into "blocks" with blocksize "b"
+    int b =4;
+    int W1[b][b],W2[b][b],W3[b][b],W4[b][b];
+   //init c 
+   for (int i = 0; i < n; i++)
+   {
+       for (int j = 0; j < n; j++)
+       {
+           c[i][j]=W[i][j];
+       }
+       
+   }
+   
+    //split W into 4 parts
+    for (int i = 0; i < b; i++)
+    {
+        for (int j = 0; j < b; j++)
+        {
+            W1[i][j]=W[i][j];
+            W2[i][j]=W[i][j+b];
+            W3[i][j]=W[i+b][j];
+            W4[i][j]=W[i+b][j+b];
+        }
+        
+    }
+    
+    // for k from 0 to B do
+     /
+    for (int k = 0; k < b; k++)
+    {
+        // dependant phase
+        floyd_w2(b,W1,W1,W1);
+        //partially dependent phase
+        #pragma omp parallel sections
+        {
+            #pragma omp section
+            {
+                floyd_w2(b,W2,W1,W2);
+            }
+            #pragma omp section
+            {
+                floyd_w2(b,W3,W3,W1);
+            }
+            #pragma omp section
+            {
+                floyd_w2(b,W4,W3,W2);
+            }
+            
+        }
+          
+
+    }
+    
 }
 
 /**
