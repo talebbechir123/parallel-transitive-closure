@@ -1,6 +1,6 @@
 
 CC=gcc
-MPICC=OMPI_CC=$(CC) mpicc    # make OpenMPI's mpicc use the compiler you wish
+MPICC=OMPI_CC=$(CC)    # make OpenMPI's mpicc use the compiler you wish
 OMP=-fopenmp
 MD5=md5sum
 

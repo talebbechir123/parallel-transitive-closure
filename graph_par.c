@@ -93,6 +93,87 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
     
 }
 
+
+void warshall_par2(size_t n, int a[n][n], int c[n][n]) {
+    
+   // split c into 4 parts and init from a
+  
+    int i, j, k;
+
+    
+}
+
+void blocked_floyd_warshall( int n,int W[][n],int c[][n])
+{
+    int i, j, k, ii, jj, kk;
+    int b = 4;  // block size
+    int Wkk[b][b], Wkj[b][b], Wik[b][b], Wij[b][b];
+    // init matrix c from matrix W
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            c[i][j] = W[i][j];
+
+
+    // split W into blocks
+    for (kk = 0; kk < n; kk += b) {
+        for (ii = 0; ii < n; ii += b) {
+            for (jj = 0; jj < n; jj += b) {
+                // process block W[kk][kk]
+                for (i = ii; i < ii + b && i < n; i++) {
+                    for (j = jj; j < jj + b && j < n; j++) {
+                        Wkk[i - ii][j - jj] = c[i][j];
+                    }
+                }
+                for (k = kk; k < kk + b && k < n; k++) {
+                    for (i = ii; i < ii + b && i < n; i++) {
+                        for (j = jj; j < jj + b && j < n; j++) {
+                            c[i - ii][j - jj] = min(Wkk[i - ii][j - jj], c[i - ii][k - kk] + c[k][j - jj]);
+                        }
+                    }
+                }
+                for (i = ii; i < ii + b && i < n; i++) {
+                    for (k = kk; k < kk + b && k < n; k++) {
+                        for (j = jj; j < jj + b && j < n; j++) {
+                            Wik[i - ii][j - jj] = c[i - ii][j - jj];
+                            Wik[i - ii][j - jj] = min(Wik[i - ii][j - jj], c[i - ii][k - kk] + c[k][j - jj]);
+                        }
+                    }
+                }
+                // partially dependent phase
+                #pragma omp parallel for private(j, k, Wkj)
+                for (j = jj; j < jj + b && j < n; j++) {
+                    if (j == kk) continue;
+                    for (k = kk; k < kk + b && k < n; k++) {
+                        for (i = ii; i < ii + b && i < n; i++) {
+                            Wkj[i - ii][k - kk] = c[k][j - jj];
+                        }
+                    }
+                    for (i = ii; i < ii + b && i < n; i++) {
+                        for (k = kk; k < kk + b && k < n; k++) {
+                            c[i - ii][j - jj] = min(c[i - ii][j - jj], Wik[i - ii][k - kk] + Wkj[i - ii][k - kk]);
+                        }
+                    }
+                }
+                // partially dependent phase
+                #pragma omp parallel for private(i, k, Wik)
+                for (i = ii; i < ii + b && i < n; i++) {
+                    if (i == kk) continue;
+                    for (k = kk; k < kk + b && k < n; k++) {
+                        for (j = jj; j < jj + b && j < n; j++) {
+                            Wik[j - jj][k - kk] = c[i][k - kk];
+                        }
+                    }
+                    for (j = jj; j < jj + b && j < n; j++) {
+                        for (k = kk; k < kk + b && k < n; k++) {
+                            c[i - ii][j - jj] = min(c[i - ii][j - jj], Wik[j - jj][k - kk] + Wkj[i - ii][k - kk]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
  * main
  */
@@ -157,11 +238,12 @@ int main (int argc, char **argv) {
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-      warshall_par(n, a, c);
+      //warshall_par(n, a, c);
+      blocked_floyd_warshall(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
-      //print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
+      print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
 
 #ifdef CCOMP
       size_t ncomps;
