@@ -141,7 +141,10 @@ void blocked_floyd_warshall( int n,int c[][n] ,int W[][n])
             }
         }
 
-        // Dependent phase
+      # pragma omp parallel sections
+      {
+       
+          // Dependent phase
         //floyd(Wkk, Wkk, Wkk, b);
         floyd_w2(b,Wkk,Wkk,Wkk);
 
@@ -209,6 +212,12 @@ void blocked_floyd_warshall( int n,int c[][n] ,int W[][n])
                     }
                 }
             }
+
+        }
+
+
+
+       
         }
     }
   }
