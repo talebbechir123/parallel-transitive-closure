@@ -122,7 +122,7 @@ int main (int argc, char **argv) {
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
-      //print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
+      print_matrix (NULL, n, c, 0, n, 0, n, 0, false);
 
 #ifdef CCOMP
       size_t ncomps;
