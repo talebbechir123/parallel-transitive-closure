@@ -98,7 +98,7 @@ void warshall_par2(size_t n, int a[n][n], int c[n][n]) {
     
    // split c into 4 parts and init from a
   
-    int i, j, k;
+    //
 
     
 }
