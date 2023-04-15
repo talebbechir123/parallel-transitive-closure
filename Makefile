@@ -96,7 +96,6 @@ run-par-1000: graph_par $(DATADIR)/$(DATASET_1000)
 
 run-par-3000: graph_par $(DATADIR)/$(DATASET_1000) 
 	@mkdir -p $(RESDIR_PAR)
-	@echo "===== $@ OMP=$(OMP)======"
 	for np in 4; do \
 		echo ">>> -n $$np"; \
 		 ./graph_par -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_PAR)/$(DATASET_3000)-$(MPI_EXT)$$np-$(TCLOS_EXT); \
