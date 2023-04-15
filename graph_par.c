@@ -180,88 +180,14 @@ int main (int argc, char **argv) {
       print_matrix ("a_orig", n , a, 0, n, 0, n, 0, false);
 #endif
       //Compute 
-      //use MPI to parallelize the warshall algorithm
-      int numprocs, myid;
-        MPI_Init(&argc, &argv);
-        MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
-        MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-        MPI_Status status;
-        // determine the number of rows each process will handle
-        int rows_per_proc = n / numprocs;
-        // determine the number of rows that will be handled by the last process
-        int last_rows = n - (numprocs - 1) * rows_per_proc;
-        // determine the starting row for each process
-        int start_row = myid * rows_per_proc;
-        // determine the ending row for each process
-        int end_row = start_row + rows_per_proc - 1;
-        // determine the starting row for the last process
-        //let process 0 initialize the matrix
-       
-
+     
       printf("original matrix\n");
       print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
      //warshall_par(n, a, c);
-     // warshall_col(n, a, c);
-
-       if (myid == 0) {
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    c[i][j] = a[i][j];
-                }
-            }
-        }
-
-        // broadcast the matrix to all processes after process 0
-        if (myid != 0) {
-            MPI_Recv(&c, n * n, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-        }
-        else {
-            for (int i = 1; i < numprocs; i++) {
-                MPI_Send(&c, n * n, MPI_INT, i, 0, MPI_COMM_WORLD);
-            }
-        }
-        // determine the starting row for each process
-        int start_row = myid * rows_per_proc;
-        // determine the ending row for each process
-        int end_row = start_row + rows_per_proc - 1;
-        // each process will compute the shortest path for the rows it is responsible for
-        for (int k = 0; k < n; k++) {
-            for (int i = start_row; i <= end_row; i++) {
-                for (int j = 0; j < n; j++) {
-                    c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
-                }
-            }
-            // process 0 will send the updated rows to the other processes
-            if (myid == 0) {
-                for (int i = 1; i < numprocs; i++) {
-                    MPI_Send(&c[i * rows_per_proc], rows_per_proc * n, MPI_INT, i, 0, MPI_COMM_WORLD);
-                }
-            }
-            // all other processes will receive the updated rows from process 0
-            else {
-                MPI_Recv(&c[start_row], rows_per_proc * n, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
-            }
-        }
-
-        // process 0 will gather the results from all the other processes
-        if (myid == 0) {
-            for (int i = 1; i < numprocs; i++) {
-                MPI_Recv(&c[i * rows_per_proc], rows_per_proc * n, MPI_INT, i, 0, MPI_COMM_WORLD, &status);
-            }
-        }
-
-        // all other processes will send their results to process 0
-        else {
-            MPI_Send(&c[start_row], rows_per_proc * n, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        }
-
-
-       
-
-       
+     warshall_col(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 

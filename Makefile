@@ -9,7 +9,7 @@ MD5=md5sum
 # -DDCOMP : to compute connected components after transitive closure
 # -DDEBUG : display various debugging messages
 
-CFLAGS=-O3 -Wall -g -DPROGRESS #-DCCOMP # -DDEBUG
+CFLAGS=-O3 -Wall -g -DPROGRESS -DCCOMP  -DDEBUG
 DATADIR=share
 RESDIR_SEQ=results-seq
 RESDIR_PAR=results-par
@@ -47,7 +47,7 @@ graph_par : graph_par.o util.h util.o graph.h
 	$(CC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
 
 graph_MPI : graph_par.o util.h util.o graph.h
-	$(MPICC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
+	$(MPICC) $(CFLAGS)  graph_par.o util.o -o $@
 
 graph_par.o : graph_par.c util.h graph.h
 	$(CC) $(CFLAGS) $(OMP) -c $<
