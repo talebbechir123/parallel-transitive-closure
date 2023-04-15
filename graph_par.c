@@ -56,8 +56,6 @@ void warshall(size_t n, int a[n][n], int c[n][n]) {
 }
 
 void warshall_par(size_t n, int a[n][n], int c[n][n]) {
- 
-
      int i, j, k;
      for (i = 0; i < n; i++)
             for (j = 0; j < n; j++)
@@ -129,130 +127,6 @@ int min(int a, int b) {
     return a < b ? a : b;
 }
 
-void floyd_w2(int b,int c[b][b],int a[b][b],int B[b][b])
-{
-    int i, j, k;
-    for (k = 0; k < b; k++) {
-        for (i = 0; i < b; i++) {
-            for (j = 0; j < b; j++) {
-                c[i][j] = min(c[i][j], a[i][k] + B[k][j]);
-                 
-            }
-        }
-    }
-    
-}
-
-    
-// Blocked Floyd-Warshall algorithm with OpenMP
-void blocked_floyd_warshall( int n,int c[][n] ,int W[][n]) 
-{
-    int B = 4;  // number of blocks
-    int b = n / B;  // size of a block
-    int k, i, j;
-
-   // init W from c
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            W[i][j] = c[i][j];
-        }
-    }
-    // Loop over blocks
-    #pragma omp parallel for schedule(static)
-    for (k = 0; k < B; k++) {
-        int Wkk[b][b], Wkj[b][b], Wik[b][b], Wij[b][b];
-        int W_kk[b][b], W_kj[b][b], W_ik[b][b], W_ij[b][b];
-
-        // Copy the block W_kk into a local buffer
-        for (i = 0; i < b; i++) {
-            for (j = 0; j < b; j++) {
-                Wkk[i][j] = W[k*b+i][k*b+j];
-            }
-        }
-
-      # pragma omp parallel sections
-      {
-       
-          // Dependent phase
-        //floyd(Wkk, Wkk, Wkk, b);
-        floyd_w2(b,Wkk,Wkk,Wkk);
-
-        // Partially dependent phase
-        #pragma omp section 
-        for (j = 0; j < B; j++) {
-            if (j != k) {
-                // Copy the block W_kj into a local buffer
-                for (i = 0; i < b; i++) {
-                    for (int l = 0; l < b; l++) {
-                        Wkj[i][l] = W[k*b+i][j*b+l];
-                    }
-                }
-                //floyd(Wkj, Wkk, Wkj, b);
-                floyd_w2(b,Wkj,Wkk,Wkj);
-                // Copy the local buffer back into W_kj
-                for (i = 0; i < b; i++) {
-                    for (int l = 0; l < b; l++) {
-                        W[k*b+i][j*b+l] = Wkj[i][l];
-                    }
-                }
-            }
-        }
-
-        #pragma omp section 
-        for (i = 0; i < B; i++) {
-            if (i != k) {
-                // Copy the block W_ik into a local buffer
-                for (int l = 0; l < b; l++) {
-                    for (j = 0; j < b; j++) {
-                        Wik[l][j] = W[i*b+l][k*b+j];
-                    }
-                }
-                //floyd(Wik, Wik, Wkk, b);
-                floyd_w2(b,Wik,Wik,Wkk);
-                // Copy the local buffer back into W_ik
-                for (int l = 0; l < b; l++) {
-                    for (j = 0; j < b; j++) {
-                        W[i*b+l][k*b+j] = Wik[l][j];
-                    }
-                }
-            }
-        }
-
-        // Independent phase
-        #pragma omp section 
-        for (i = 0; i < B; i++) {
-            if (i != k) {
-                // Copy the block W_ij into a local buffer 
-
-            for (int l = 0; l < b; l++) {
-                for (j = 0; j < B; j++) {
-                    if (j != k) {
-                        Wij[l][j] = W[i*b+l][j*b+k];
-                    }
-                }
-            }
-            //floyd(Wij, Wik, Wkj, b);
-            floyd_w2(b,Wij,Wik,Wkj);
-            // Copy the local buffer back into W_ij
-            for (int l = 0; l < b; l++) {
-                for (j = 0; j < B; j++) {
-                    if (j != k) {
-                        W[i*b+l][j*b+k] = Wij[l][j];
-                    }
-                }
-            }
-
-        }
-
-
-
-       
-        }
-    }
-  }
-}
-
-
 
 /**
  * main
@@ -315,15 +189,13 @@ int main (int argc, char **argv) {
       print_matrix ("a_orig", n , a, 0, n, 0, n, 0, false);
 #endif
       //Compute 
-       printf("original matrix\n");
-        print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
+      printf("original matrix\n");
+      print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-      //warshall_par(n, a, c);
-      warshall_col(n, a, c);
-       // blocked_floyd_warshall(n, a, c);
-      //blocked_floyd_warshall(n, a, c);
+      warshall_par(n, a, c);
+      //warshall_col(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
