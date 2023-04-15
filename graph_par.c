@@ -133,7 +133,7 @@ void w_2loop(size_t n, int a[n][n], int c[n][n]){
       #pragma omp parallel  shared(c, n,k)  
         {
             for (size_t k = 0; k < n; k++) {
-                #pragma omp for schedule(guided,50) private(i,j)
+                #pragma omp for schedule(static) private(i,j)
                 for (size_t i = 0; i < n; i++) {
                     for (size_t j = 0; j < n; j++) {
                         c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
