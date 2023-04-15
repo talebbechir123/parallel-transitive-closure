@@ -99,6 +99,29 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 }
 
 
+void warshall_col(size_t n, int a[n][n], int c[n][n]){
+    // init matrix c from matrix a
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            c[i][j] = a[i][j];
+    
+    // updates the value of c[i][j] to true if there is a path
+    #pragma omp parallel  shared(c, n) private(i)
+    {
+        #pragma omp for schedule(static)
+        for (size_t k = 0; k < n; k++) {
+            for (size_t i = 0; i < n; i++) {
+                for (size_t j = 0; j < n; j++) {
+                    c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
+                }
+            }
+        }
+
+    }
+
+}
+
+
 
 int min(int a, int b) {
     return a < b ? a : b;
@@ -295,7 +318,8 @@ int main (int argc, char **argv) {
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-      warshall_par(n, a, c);
+      //warshall_par(n, a, c);
+      warshall_col(n, a, c);
        // blocked_floyd_warshall(n, a, c);
       //blocked_floyd_warshall(n, a, c);
       gettimeofday (&tv_end, NULL);
