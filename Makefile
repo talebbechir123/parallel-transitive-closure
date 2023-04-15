@@ -1,6 +1,6 @@
 
 CC=gcc
-MPICC=OMPI_CC=$(CC)    # make OpenMPI's mpicc use the compiler you wish
+MPICC=OMPI_CC=mpicc  # make OpenMPI's mpicc use the compiler you wish
 OMP=-fopenmp
 MD5=md5sum
 
@@ -45,6 +45,9 @@ graph_omp.o : graph_omp.c util.h graph.h
 
 graph_par : graph_par.o util.h util.o graph.h
 	$(CC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
+
+graph_MPI : graph_par.o util.h util.o graph.h
+	$(MPICC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
 
 graph_par.o : graph_par.c util.h graph.h
 	$(CC) $(CFLAGS) $(OMP) -c $<
