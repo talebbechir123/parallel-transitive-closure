@@ -15,6 +15,7 @@ RESDIR_SEQ=results-seq
 RESDIR_PAR=results-par
 DATASET_1000=1000x1000.adj
 DATASET_3000=3000x3000.adj
+DATASET_2000=2000x2000.adj
 DATASET_10000=10000x10000.adj
 TCLOS_EXT=tclos.adj
 MPI_EXT=mpirun-n
@@ -63,6 +64,7 @@ $(DATADIR)/$(DATASET_1000) :
 $(DATADIR)/$(DATASET_3000) :
 	@echo "Generating $(DATADIR)/$(DATASET_3000) ..." 
 	@./gen_adj.py 3000 4 > $(DATADIR)/$(DATASET_3000) 
+
 $(DATADIR)/$(DATASET_2000) :
 	@echo "Generating $(DATADIR)/$(DATASET_2000) ..." 
 	@./gen_adj.py 2000 4 > $(DATADIR)/$(DATASET_2000)
