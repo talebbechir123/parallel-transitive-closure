@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <omp.h>
+#include <mpi.h>
 
 
 // matrix size and some others
