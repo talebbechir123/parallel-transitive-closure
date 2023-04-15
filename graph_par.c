@@ -100,6 +100,8 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 
 
 void warshall_col(size_t n, int a[n][n], int c[n][n]){
+
+    int i, j, k;
     // init matrix c from matrix a
     for (size_t i = 0; i < n; i++)
         for (size_t j = 0; j < n; j++)
