@@ -96,7 +96,7 @@ void warshall_col(size_t n, int a[n][n], int c[n][n]){
     // updates the value of c[i][j] to true if there is a path
     #pragma omp parallel  shared(c, n)  
     {
-        omp_set_num_threads(8);
+       
         #pragma omp for schedule(guided,50) private(i, j)
         for (size_t k = 0; k < n; k++) {
             for (size_t i = 0; i < n; i++) {
