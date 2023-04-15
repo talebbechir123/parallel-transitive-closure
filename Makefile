@@ -63,6 +63,10 @@ $(DATADIR)/$(DATASET_1000) :
 $(DATADIR)/$(DATASET_3000) :
 	@echo "Generating $(DATADIR)/$(DATASET_3000) ..." 
 	@./gen_adj.py 3000 4 > $(DATADIR)/$(DATASET_3000) 
+$(DATADIR)/$(DATASET_2000) :
+	@echo "Generating $(DATADIR)/$(DATASET_2000) ..." 
+	@./gen_adj.py 2000 4 > $(DATADIR)/$(DATASET_2000)
+
 
 $(DATADIR)/$(DATASET_10000): 
 	@echo "Generating $(DATADIR)/$(DATASET_10000) ..." 
@@ -78,6 +82,11 @@ run-seq-3000: graph $(DATADIR)/$(DATASET_3000)
 	@mkdir -p $(RESDIR_SEQ)
 	@echo "===== $@ ======"
 	./graph -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_SEQ)/$(DATASET_3000)
+
+run-seq-2000: graph $(DATADIR)/$(DATASET_2000)
+	@mkdir -p $(RESDIR_SEQ)
+	@echo "===== $@ ======"
+	./graph -i $(DATADIR)/$(DATASET_2000) -t adj > $(RESDIR_SEQ)/$(DATASET_2000)
 
 run-seq-10000: graph $(DATADIR)/$(DATASET_10000)
 	@echo "Warning : will run for 10 minutes ..." 
