@@ -98,7 +98,7 @@ run-par-3000: graph_par $(DATADIR)/$(DATASET_1000)
 	@mkdir -p $(RESDIR_PAR)
 	for np in 4; do \
 		echo ">>> -n $$np"; \
-		 ./graph_par -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_PAR)/$(DATASET_3000)-$(MPI_EXT)$$np-$(TCLOS_EXT); \
+		 ./graph_par -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_PAR)/$(DATASET_3000); \
 		echo ; \
 	done
 
@@ -107,7 +107,7 @@ run-par-10000: graph_par $(DATADIR)/$(DATASET_10000)
 	@echo "===== $@ OMP=$(OMP)======"
 	for np in 4; do \
 		echo ">>> -n $$np"; \
-		mpirun -n $$np -hostfile hosts.txt ./graph_par -i $(DATADIR)/$(DATASET_10000) -t adj > $(RESDIR_PAR)/$(DATASET_10000)-$(MPI_EXT)$$np-$(TCLOS_EXT); \
+		 ./graph_par -i $(DATADIR)/$(DATASET_10000) -t adj > $(RESDIR_PAR)/$(DATASET_10000); \
 		echo ; \
 	done
 
@@ -116,7 +116,7 @@ run-pc-1000: graph_par $(DATADIR)/$(DATASET_1000)
 
 	for np in 4; do \
 		echo ">>> -n $$np"; \
-	    ./graph_par -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)$$np-$(TCLOS_EXT); \
+	    ./graph_par -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_PAR)/$(DATASET_1000); \
 		echo ; \
 	done
 
@@ -130,21 +130,21 @@ test-seq-3000: run-seq-3000
 test-seq-10000: run-seq-10000 
 
 test-par-1000: run-par-1000
-	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000)-$(MPI_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_1000)-$(TCLOS_EXT))"
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000) $(RESDIR_SEQ)/$(DATASET_1000))"
 
 test-par-3000: run-seq-3000 run-par-3000
-	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_3000)-$(MPI_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_3000)-$(TCLOS_EXT))"
-	@echo "MD5 $(RESDIR_PAR)/$(DATASET_3000)-$(MPI_EXT)*-$(TCLOS_EXT)"
-	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_3000)-$(MPI_EXT)*-$(TCLOS_EXT) )"
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_3000)$(RESDIR_SEQ)/$(DATASET_3000))"
+	@echo "MD5 $(RESDIR_PAR)/$(DATASET_3000)"
+	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_3000))"
 
 test-par-10000: run-par-10000 
-	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_10000)-$(MPI_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_10000)-$(TCLOS_EXT))"
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_10000)$(RESDIR_SEQ)/$(DATASET_10000))"
 	@echo "MD5"
-	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_10000)-$(MPI_EXT)*-$(TCLOS_EXT) )"
+	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_10000))"
 test-pc-1000: run-pc-1000 run-seq-1000
-	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)*-$(TCLOS_EXT) $(RESDIR_SEQ)/$(DATASET_1000)-$(TCLOS_EXT))"
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000) $(RESDIR_SEQ)/$(DATASET_1000))"
 	@echo "MD5"
-	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_1000)-$(OMP_EXT)*-$(TCLOS_EXT) )"
+	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_1000))"
 
 
 
