@@ -130,17 +130,16 @@ void w_2loop(size_t n, int a[n][n], int c[n][n]){
             c[i][j] = a[i][j];
     
     // updates the value of c[i][j] to true if there is a path
-    for(size_t k = 0; k < n; k++){
+    for(size_t k = 0; k < n; k++)
         #pragma omp parallel for  shared(c, n,k) private(i,j) schedule(static)
-        {
-            
+        { 
             for (size_t i = 0; i < n; i++) {
                 for (size_t j = 0; j < n; j++) {
                     c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
                 }
             }
         }
-    }
+    
 
 }
 
