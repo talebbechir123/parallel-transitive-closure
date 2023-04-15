@@ -74,7 +74,7 @@ run-seq-1000: graph $(DATADIR)/$(DATASET_1000)
 	@echo "===== $@ ======"
 	./graph -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_SEQ)/$(DATASET_1000)
 
-run-seq-3000: graph $(DATADIR)/$(DATASET_3000) $(RESDIR_SEQ)/$(DATASET_3000)
+run-seq-3000: graph $(DATADIR)/$(DATASET_3000)
 	@mkdir -p $(RESDIR_SEQ)
 	@echo "===== $@ ======"
 	./graph -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_SEQ)/$(DATASET_3000)
