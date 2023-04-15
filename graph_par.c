@@ -67,18 +67,6 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
  #pragma omp parallel shared(a, c, n) private(i, j, k) 
     {
 
-         // init matrix c from matrix a
-     
-        
-       //* print_matrix(): printed 1000 lines.
-      //Init : 0.056649s, Compute : 1.430937s
-
-      // version par
-     // * print_matrix(): printed 1000 lines.
-    //Init : 0.040848s, Compute : 0.318178s
-        
-        //  updates the value of c[i][j] to true if there is a path
-        //  from i to j that goes through k.
         #pragma omp for schedule(static)
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
@@ -98,7 +86,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 
 
 void warshall_col(size_t n, int a[n][n], int c[n][n]){
-
+   omp_set_num_threads(8);
     int i, j, k;
     // init matrix c from matrix a
     for (size_t i = 0; i < n; i++)
