@@ -90,7 +90,7 @@ run-par-1000: graph_par $(DATADIR)/$(DATASET_1000)
 	@echo "===== $@ OMP=$(OMP)======"
 	for np in 4; do \
 		echo ">>> -n $$np"; \
-		mpirun -n $$np -hostfile hosts.txt ./graph_par -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_PAR)/$(DATASET_1000)-$(MPI_EXT)$$np-$(TCLOS_EXT); \
+		./graph_par -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_PAR)/$(DATASET_1000); \
 		echo ; \
 	done
 
