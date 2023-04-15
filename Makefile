@@ -133,7 +133,7 @@ test-par-1000: run-par-1000
 	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_1000) $(RESDIR_SEQ)/$(DATASET_1000))"
 
 test-par-3000: run-seq-3000 run-par-3000
-	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_3000)$(RESDIR_SEQ)/$(DATASET_3000))"
+	@echo "$(shell cmp $(RESDIR_PAR)/$(DATASET_3000) $(RESDIR_SEQ)/$(DATASET_3000))"
 	@echo "MD5 $(RESDIR_PAR)/$(DATASET_3000)"
 	@echo "$(shell $(MD5) $(RESDIR_PAR)/$(DATASET_3000))"
 
