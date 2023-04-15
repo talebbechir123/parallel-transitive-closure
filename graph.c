@@ -116,7 +116,7 @@ int main (int argc, char **argv) {
 #endif
       //Compute
      // printf("original matrix\n");
-        print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
+        //print_matrix (NULL, n, a, 0, n, 0, n, 0, false);
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
