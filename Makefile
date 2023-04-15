@@ -72,18 +72,18 @@ $(DATADIR)/$(DATASET_10000):
 run-seq-1000: graph $(DATADIR)/$(DATASET_1000) 
 	@mkdir -p $(RESDIR_SEQ)
 	@echo "===== $@ ======"
-	./graph -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_SEQ)/$(DATASET_1000)-$(TCLOS_EXT)
+	./graph -i $(DATADIR)/$(DATASET_1000) -t adj > $(RESDIR_SEQ)/$(DATASET_1000)
 
 run-seq-3000: graph $(DATADIR)/$(DATASET_3000) $(RESDIR_SEQ)/$(DATASET_3000)
 	@mkdir -p $(RESDIR_SEQ)
 	@echo "===== $@ ======"
-	./graph -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_SEQ)/$(DATASET_3000)-$(TCLOS_EXT)
+	./graph -i $(DATADIR)/$(DATASET_3000) -t adj > $(RESDIR_SEQ)/$(DATASET_3000)
 
 run-seq-10000: graph $(DATADIR)/$(DATASET_10000)
 	@echo "Warning : will run for 10 minutes ..." 
 	@mkdir -p $(RESDIR_SEQ)
 	@echo "===== $@ ======"
-	./graph -i $(DATADIR)/$(DATASET_10000) -t adj > $(RESDIR_SEQ)/$(DATASET_10000)-$(TCLOS_EXT)
+	./graph -i $(DATADIR)/$(DATASET_10000) -t adj > $(RESDIR_SEQ)/$(DATASET_10000)
 
 run-par-1000: graph_par $(DATADIR)/$(DATASET_1000) 
 	@mkdir -p $(RESDIR_PAR)
