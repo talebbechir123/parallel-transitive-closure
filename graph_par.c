@@ -106,9 +106,9 @@ void warshall_col(size_t n, int a[n][n], int c[n][n]){
             c[i][j] = a[i][j];
     
     // updates the value of c[i][j] to true if there is a path
-    #pragma omp parallel  shared(c, n) private(i)
+    #pragma omp parallel  shared(c, n) 
     {
-        #pragma omp for schedule(guided,50)
+        #pragma omp for schedule(static) private(i, j)
         for (size_t k = 0; k < n; k++) {
             for (size_t i = 0; i < n; i++) {
                 for (size_t j = 0; j < n; j++) {
@@ -119,28 +119,6 @@ void warshall_col(size_t n, int a[n][n], int c[n][n]){
 
     }
 
-}
-
-void w_2loop(size_t n, int a[n][n], int c[n][n]){
-
-     int i, j, k;
-    // init matrix c from matrix a
-    for (size_t i = 0; i < n; i++)
-        for (size_t j = 0; j < n; j++)
-            c[i][j] = a[i][j];
-    
-    // updates the value of c[i][j] to true if there is a path
-      #pragma omp parallel  shared(c, n,k)  
-        {
-            for (size_t k = 0; k < n; k++) {
-                #pragma omp for schedule(static) private(i,j)
-                for (size_t i = 0; i < n; i++) {
-                    for (size_t j = 0; j < n; j++) {
-                        c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
-                    }
-                }
-            }
-        }
 }
 
 
@@ -216,8 +194,8 @@ int main (int argc, char **argv) {
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
      //warshall_par(n, a, c);
-      //warshall_col(n, a, c);
-        w_2loop(n, a, c);
+      warshall_col(n, a, c);
+       
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
