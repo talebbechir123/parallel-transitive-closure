@@ -9,7 +9,7 @@ MD5=md5sum
 # -DDCOMP : to compute connected components after transitive closure
 # -DDEBUG : display various debugging messages
 
-CFLAGS=-O3 -Wall -g -DPROGRESS -DCCOMP  -DDEBUG
+CFLAGS=-O3 -Wall -g -DPROGRESS #-DCCOMP # -DDEBUG
 DATADIR=share
 RESDIR_SEQ=results-seq
 RESDIR_PAR=results-par
