@@ -184,9 +184,9 @@ int main (int argc, char **argv) {
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-      warshall_par(n, a, c);
+      //warshall_par(n, a, c);
       //warshall_col(n, a, c);
-        //dummy_warshall(n, a, c);
+    dummy_warshall(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
