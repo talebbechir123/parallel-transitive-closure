@@ -182,7 +182,7 @@ int main (int argc, char **argv) {
 #endif
       //Compute 
       int rank, size;
-      mpi_init(argc, argv);
+      MPI_Init(&argc,&argv);
       fprintf(stderr, "* MPI initialized.\n");
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);

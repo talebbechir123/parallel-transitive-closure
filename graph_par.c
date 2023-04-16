@@ -75,14 +75,8 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
                     c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
                 }
             }
-        }
-
-
-         
+        }    
     }
-    
-
-    
 }
 
 
