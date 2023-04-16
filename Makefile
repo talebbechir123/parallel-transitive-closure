@@ -46,9 +46,6 @@ graph_omp.o : graph_omp.c util.h graph.h
 graph_par : graph_par.o util.h util.o graph.h
 	$(CC) $(CFLAGS) $(OMP) graph_par.o util.o -o $@
 
-graph_MPI : graph_par.o util.h util.o graph.h
-	$(MPICC) $(CFLAGS)  graph_par.o util.o -o $@
-
 graph_par.o : graph_par.c util.h graph.h
 	$(CC) $(CFLAGS) $(OMP) -c $<
 
