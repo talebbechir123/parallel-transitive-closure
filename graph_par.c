@@ -243,9 +243,9 @@ int main (int argc, char **argv) {
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
       //
-      omp_set_num_threads(8);
-      warshall_par(n, a, c);
-        //warshall_versionB(n, a, c);
+      omp_set_num_threads(4);
+      //warshall_par(n, a, c);
+        warshall_versionB(n, a, c);
       //warshall_col(n, a, c);
       //dummy_warshall(n, a, c);
       
