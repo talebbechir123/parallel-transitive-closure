@@ -67,6 +67,14 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 
  #pragma omp parallel shared(a, c, n) private(i, j, k) 
     {
+        #pragma omp single
+        {
+            fprintf(stderr, "* %d threads\n", omp_get_num_threads());
+            for (i = 0; i < n; i++)
+                for (j = 0; j < n; j++)
+                    c[i][j] = a[i][j];
+        }
+        
 
         #pragma omp for schedule(static)
         for (k = 0; k < n; k++) {
@@ -181,9 +189,10 @@ int main (int argc, char **argv) {
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-      //warshall_par(n, a, c);
+      //
       omp_set_num_threads(8);
-      warshall_col(n, a, c);
+      warshall_par(n, a, c);
+      //warshall_col(n, a, c);
       //dummy_warshall(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
