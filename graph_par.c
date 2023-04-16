@@ -248,6 +248,7 @@ int main (int argc, char **argv) {
         warshall_versionB(n, a, c);
       //warshall_col(n, a, c);
       //dummy_warshall(n, a, c);
+      print("number of threads: %d", omp_get_num_threads());
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
