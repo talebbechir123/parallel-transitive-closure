@@ -111,7 +111,7 @@ void warshall_col(size_t n, int a[n][n], int c[n][n]){
 
 }
 
-//use MPI to parallelize the warshall algorithm
+
 
 
 int min(int a, int b) {
@@ -186,8 +186,8 @@ int main (int argc, char **argv) {
       fprintf(stderr, "* starting computation (n=%ld) ... ", n);
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
-     //warshall_par(n, a, c);
-     warshall_col(n, a, c);
+      //warshall_par(n, a, c);
+      warshall_col(n, a, c);
       gettimeofday (&tv_end, NULL);
       fprintf(stderr, " done.\n");
 
