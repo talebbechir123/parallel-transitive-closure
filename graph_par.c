@@ -124,6 +124,54 @@ void dummy_warshall(size_t n, int a[n][n], int c[n][n]) {
 
 
 
+/* 
+ * Transitive closure with the Floyd-Warshall algorithm.
+ * Works for directed or undirected graphs.
+ * https://fr.wikipedia.org/wiki/Algorithme_de_Warshall
+ *
+ * @param a : the adjacency matrix of the graph
+ * @param c : output: the adjacency matrix resulting from tansitive closure   
+ */
+void warshall_versionB(size_t n, int a[n][n], int c[n][n]) {
+#ifdef PROGRESS
+    size_t percent=0;
+#endif
+    //---------------------------------------------------------------------------
+    // init matrix c from matrix a
+    #pragma omp parallel for collapse(2) 
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            c[i][j] = a[i][j];
+
+    /*  updates the value of c[i][j] to true if there is a path 
+     *  from i to j that goes through k. */
+    const size_t block_size = 32;
+    #pragma omp parallel
+    {
+        #pragma omp for schedule(static, block_size) nowait
+        for (size_t k0 = 0; k0 < n; k0 += block_size) {
+            for (size_t i0 = 0; i0 < n; i0 += block_size) {
+                const size_t k_block_size = (k0 + block_size < n) ? block_size : n - k0;
+                const size_t i_block_size = (i0 + block_size < n) ? block_size : n - i0;
+                #pragma omp parallel for schedule(dynamic)
+                for (size_t k = k0; k < k0 + k_block_size; k++) {
+                    for (size_t i = i0; i < i0 + i_block_size; i++) {
+                        for (size_t j = 0; j < n; j++) {
+                            c[i][j] = c[i][j] || (c[i][k] && c[k][j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+#ifdef PROGRESS
+    fprintf(stderr, "\n");
+#endif
+}
+
+
+
+
 
 int min(int a, int b) {
     return a < b ? a : b;
@@ -195,8 +243,9 @@ int main (int argc, char **argv) {
       fflush(stderr);
       gettimeofday (&tv_begin, NULL);
       //
-      omp_set_num_threads(8);
-      warshall_par(n, a, c);
+      //omp_set_num_threads(8);
+      //warshall_par(n, a, c);
+        warshall_versionB(n, a, c);
       //warshall_col(n, a, c);
       //dummy_warshall(n, a, c);
       gettimeofday (&tv_end, NULL);
