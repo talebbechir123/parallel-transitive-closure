@@ -64,8 +64,13 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
 
     // set the number of threads
     //omp_set_num_threads(6);
+    // set the chunk size depending on the number of threads and the matrix size
+    int chunk = n/omp_get_max_threads();
 
- #pragma omp parallel shared(a, c, n) private(i, j, k) 
+    
+
+
+ #pragma omp parallel shared(c, n) 
     {
         #pragma omp single
         {
@@ -76,7 +81,7 @@ void warshall_par(size_t n, int a[n][n], int c[n][n]) {
         }
         
 
-        #pragma omp for schedule(static)
+        #pragma omp for schedule(dynamic, chunk) private(i,j)
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
